@@ -26,13 +26,13 @@ def producer():
 	name = threading.current_thread().name
 	while True:
 		if len(basket) >= basket_size:
-			print('$$$$$$仓库已经装满了，%s 已经退出$$$$$$$$' % name)
+			print('------------仓库已经装满了，%s 已经退出------------' % name)
 			break
 			# time.sleep(5)
 		else:
 			counter += 1
 			# 馒头名称
-			bread_name = 'bread%d' % counter
+			bread_name = 'bread_%d' % counter
 			bread = Bread(name=bread_name)
 			# 休息时间
 			sleep_time = random.randint(1,5)
@@ -52,7 +52,7 @@ def consumer():
 			print('<<<<<<<<<< %s 消费馒头: %s ;总共 %d 个馒头;休息 %d 秒' % (name, bread.name, len(basket), sleep_time))
 			time.sleep(sleep_time)
 		else:
-			print('###########馒头已经消费完毕，%s 已经退出###########' % name)
+			print('------------馒头已经消费完毕，%s 已经退出--------------' % name)
 			break
 
 
@@ -77,5 +77,9 @@ class Factory(object):
 
 if __name__ == '__main__':
 	factory = Factory()
+	print('------------开始生产------------------------')
 	factory.produce()
+	print('------------5s后开始消费------------------------')
+	time.sleep(5)
+	print('------------开始消费------------------------')
 	factory.consume()
