@@ -8,13 +8,13 @@
 生产者 每生产一个馒头，休息1秒
 """
 import time, threading, random
-from collections import namedtuple
+from collections import namedtuple, deque
 
 # 馒头对象
 Bread = namedtuple('Bread', ['name'])
 
 # 篮子，用来装馒头
-basket = []
+basket = deque()
 basket_size = 20
 
 counter = 0
@@ -25,7 +25,7 @@ def producer():
 	global counter
 	name = threading.current_thread().name
 	while True:
-		if len(basket) >= basket_size:
+		if len(list(basket)) >= basket_size:
 			print('------------仓库已经装满了，%s 已经退出------------' % name)
 			break
 			# time.sleep(5)
@@ -45,8 +45,8 @@ def consumer():
 	""" 消费者 """
 	name = threading.current_thread().name
 	while True:
-		if len(basket) > 0:
-			bread = basket.pop()
+		if len(list(basket)) > 0:
+			bread = basket.popleft()
 			# 休息时间
 			sleep_time = random.randint(1,5)
 			print('<<<<<<<<<< %s 消费馒头: %s ;总共 %d 个馒头;休息 %d 秒' % (name, bread.name, len(basket), sleep_time))
