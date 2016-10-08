@@ -7,10 +7,11 @@
 生产者 总共5条流水线，每生产一个馒头，随机休息1-5秒
 消费者 总共4条流水线，每消费一个馒头，随机休息1-5秒
 """
-
-import threading, time, random
+import random, time
 from queue import Queue
+import multiprocessing as mp
 from collections import namedtuple
+
 
 # 馒头对象
 Bread = namedtuple('Bread', ['name'])
@@ -25,7 +26,7 @@ class Basket(object):
     def go_sleep(self):
         sleep_time = random.randint(1, 5)
 
-        print('*********休息 %d--活跃流水线：%d' % (sleep_time, threading.active_count()))
+        print('*********休息 %d--活跃流水线：%d' % (sleep_time, mp.active_count()))
         time.sleep(sleep_time)
 
     @property
@@ -40,27 +41,27 @@ class Basket(object):
 
     def push(self):
         """ 添加馒头 """
-        # 线程用户
-        thread_name = threading.current_thread().name
+        # 进程用户
+        process_name = mp.current_process().name
         name = "Bread_%03d" % self._counter
         self._counter += 1
         bread = Bread(name=name)
         self._basket.put(bread)
-        print(">> %s 生产馒头：%s , 共有 %03d 馒头" % (thread_name, name, self._basket.qsize()))
+        print(">> %s 生产馒头：%s , 共有 %03d 馒头" % (process_name, name, self._basket.qsize()))
 
     def pop(self):
         """ 消费馒头 """
-        # 线程用户
-        thread_name = threading.current_thread().name
+        # 进程用户
+        process_name = mp.current_process().name
         if not self.is_empty:
             bread = self._basket.get()
-            print("<< %s 消费馒头：%s , 共有 %03d 馒头" % (thread_name, bread.name, self._basket.qsize()))
+            print("<< %s 消费馒头：%s , 共有 %03d 馒头" % (process_name, bread.name, self._basket.qsize()))
         else:
             print("------------------没有馒头了------------------")
 
 
 
-class Producer(threading.Thread):
+class Producer(mp.Process):
     """ 生产者 """
 
     def __init__(self, basket, condition, name=None):
@@ -87,7 +88,7 @@ class Producer(threading.Thread):
                 self._condition.release()
 
 
-class Consumer(threading.Thread):
+class Consumer(mp.Process):
     """ 消费者 """
     def __init__(self, basket, condition, name=None):
         super(Consumer, self).__init__(name=name)
@@ -114,7 +115,7 @@ class Consumer(threading.Thread):
 
 def test():
     basket = Basket(5)
-    condition = threading.Condition()
+    condition = mp.Condition()
     for i in range(5):
         name = 'P_%d' % i
         print('开启生产线>>>%s' % name)
