@@ -26,8 +26,13 @@ def log(text=None):
 def now():
     print('2016-9-19 19:09:51')
 
+@log()
+def now2():
+    print('test')
+
 
 if __name__ == '__main__':
     now()
+    now2()
     # 在不添加wraps时now.__name__ = wrapper
     print(now.__name__)

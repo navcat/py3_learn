@@ -4,7 +4,7 @@
 from collections import OrderedDict
 
 class FiFoDict(OrderedDict):
-	''' 
+	'''
 	定义一个先进先出的dict
 	'''
 	def __init__(self, size):
