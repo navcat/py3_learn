@@ -109,6 +109,6 @@ if __name__ == '__main__':
     # 测试yield
     # test_count_down()
     # 协程测试
-    # test_receiver()
+    test_receiver()
     # test_receiver2()
-    test_receiver_with_param()
+    # test_receiver_with_param()
